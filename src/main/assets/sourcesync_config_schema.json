@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "sizeToken": {
+      "type": "string",
+      "enum": ["xxs", "xs", "sm", "md", "lg", "xl", "xxl"]
+    },
+    "segmentAttributes": {
+      "type": "object",
+      "properties": {
+        "font": { "type": "string" },
+        "size": { "type": ["string", "number"] },
+        "color": { "type": "string" },
+        "weight": { "type": "string" },
+        "style": { "type": "string" },
+        "alignment": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "segment": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "content": { "type": "string" },
+        "attributes": { "$ref": "#/definitions/segmentAttributes" }
+      },
+      "required": ["type"],
+      "additionalProperties": true
+    }
+  },
+  "type": "object",
+  "properties": {
+    "sizeTokens": {
+      "type": "object",
+      "properties": {
+        "xxs": { "type": "number" },
+        "xs": { "type": "number" },
+        "sm": { "type": "number" },
+        "md": { "type": "number" },
+        "lg": { "type": "number" },
+        "xl": { "type": "number" },
+        "xxl": { "type": "number" }
+      },
+      "required": ["xxs", "xs", "sm", "md", "lg", "xl", "xxl"],
+      "additionalProperties": false
+    },
+    "overlay": {
+      "type": "object",
+      "properties": {
+        "defaultPadding": { "type": "number" },
+        "defaultOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["defaultPadding", "defaultOpacity"],
+      "additionalProperties": false
+    },
+    "previews": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "subtitle": { "type": "string" },
+            "titleSize": { "$ref": "#/definitions/sizeToken" },
+            "subtitleSize": { "$ref": "#/definitions/sizeToken" },
+            "image": { "type": "string" },
+            "showFomo": { "type": "boolean" },
+            "showImage": { "type": "boolean" },
+            "backgroundAppearance": {
+              "type": "string",
+              "enum": ["imageAndText", "textOnly", "imageOnly"]
+            },
+            "backgroundColor": { "type": "string" },
+            "template": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/segment" }
+            },
+            "defaults": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "subtitle": { "type": "string" },
+                "showImage": { "type": "boolean" },
+                "backgroundOpacity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "backgroundColor": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "required": ["default"],
+      "additionalProperties": true
+    }
+  },
+  "required": ["sizeTokens", "overlay", "previews"],
+  "additionalProperties": true
+}

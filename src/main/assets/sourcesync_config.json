@@ -1,0 +1,50 @@
+{
+  "sizeTokens": {
+    "xxs": 6,
+    "xs": 10,
+    "sm": 14,
+    "md": 16,
+    "lg": 20,
+    "xl": 24,
+    "xxl": 32
+  },
+  "overlay": {
+    "defaultPadding": 16,
+    "defaultOpacity": 0.8
+  },
+  "previews": {
+    "default": {
+      "template": [
+        {
+          "type": "text",
+          "content": "{title}",
+          "attributes": {
+            "font": "system",
+            "size": "lg",
+            "color": "#FFFFFF",
+            "weight": "bold",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "text",
+          "content": "{subtitle}",
+          "attributes": {
+            "font": "system",
+            "size": "md",
+            "color": "#CCCCCC",
+            "style": "italic",
+            "alignment": "left"
+          }
+        }
+      ],
+      "defaults": {
+        "title": "Default Title",
+        "subtitle": "Tap here to learn more",
+        "showImage": true,
+        "backgroundOpacity": 0.66,
+        "backgroundColor": "#000000"
+      }
+    }
+  }
+}
