@@ -27,7 +27,7 @@ dependencyResolutionManagement {
 }
 ```
 
-### Step 2: Add SourceSYnc to your app dependancies
+### Step 2: Add SourceSync to your app dependancies
 Add the dependency to build.gradle.kts:
 
 ```gradle
