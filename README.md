@@ -14,31 +14,31 @@ The Android SDK is a native implementation that enables SourceSync within your a
 
 ## Installation
 
-### Step 1: Add JitPack repository
-Add JitPack repository in your root build.gradle at the end of repositories:
+### Step 1: Add JitPack
+Add the JitPack repository to ```settings.gradle.kts```
 
 ```gradle
-allprojects {
+dependencyResolutionManagement {
     repositories {
-        ...
-        maven { url 'https://jitpack.io' }
+        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
-### Step 2: Add the dependency
-Add the dependency to your app's build.gradle:
+### Step 2: Add SourceSYnc
+Add the dependency to build.gradle.kts:
 
 ```gradle
 dependencies {
-    implementation 'com.github.Source-Digital.native-sdk:sourcesync-android:v0.0.1'
+    implementation("com.github.Source-Digital.native-sdk:sourcesync-android:0.0.4")
 }
 ```
+That's it!
 
 ## Quick Start
 
 ### Get an API key
-Like most APIs, SourceSync requires an API key for usage. This key dictates what you have access to, your settings and more. Get one by visiting the [developer portal](https://developer.sourcesync.io), giving yourself one by logging into the admin app ["Kurator"](https://admin.sourcesync.io) (under your account page, then the organization page, then the access tab), or to quickly kick the tires, just use our demo key, which is ```app.v1.demo```
+SourceSync requires an API key to use. You issue your own keys from your account. Get one by visiting the admin [Kurator app](https://admin.sourcesync.io) (under your account page, then the organization page, then the access tab), or to quickly kick the tires, just use our demo key, which is ```app.v1.demo```
 
 ### Initialize SDK
 ```java
