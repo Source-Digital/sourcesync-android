@@ -6,11 +6,13 @@ SourceSync is a platform that syncronizes metadata with content for almost any r
 1. Transcripts.
 2. Descriptions of what's on screen.
 3. Mood and sentiment data.
-4. Categories contained within the moment including advertizing (IAB v1, v2 and v3 supported), nouns and moure.
-5. Keywords contained within the moment, including people, places, things, goals, scores, underdogs, and more.
-6. Entities within content, including Wikipedia IDs, Google Knolwedge Graph IDs, IMDB IDs and more.
+4. Categories contained within the moment including advertizing (IAB v1, v2 and v3 supported), nouns and more.
+5. Keywords contained within the moment, including people, places, things, goals, scores, underdogs, etc.
+6. Entities within content, including Wikipedia IDs, Google Knolwedge Graph IDs, IMDB IDs, etc.
 
 The Android SDK is a native implementation that enables SourceSync within your app. It allows synchronized overlay content to be displayed on top of video content. The system supports multiple overlay positions with independent content streams, making it possible to show different content at different positions simultaneously.
+
+*The Android SDK has been tested to work for both Java and Kotlin.*
 
 ## Installation
 
@@ -25,7 +27,7 @@ dependencyResolutionManagement {
 }
 ```
 
-### Step 2: Add SourceSYnc
+### Step 2: Add SourceSYnc to your app dependancies
 Add the dependency to build.gradle.kts:
 
 ```gradle
@@ -33,7 +35,16 @@ dependencies {
     implementation("com.github.Source-Digital.native-sdk:sourcesync-android:0.0.4")
 }
 ```
-That's it!
+### Step 3: Import the sourcesync functionality you want
+
+At minimum, you'll need io.sourcesync.android.SourceSync, and for most use cases, you'll probably want io.sourcesync.android.Distribution...
+
+```java
+import io.sourcesync.android.SourceSYnc                           // The main SDK (required)
+import io.sourcesync.android.Distribution                         // For loading and controlling distirbutions (optional)
+```
+
+That's it! Everything you need is now setup in your app!
 
 ## Quick Start
 
@@ -439,6 +450,128 @@ Distribution.ActivationInstance instance = ActivationInstance.fromJson(activatio
 // Step 4: Add it to your distribution...
 distribution.activations.add(instance);
 ```
+
+# Full examples
+
+## Kotlin
+Here is a MainActivity.kt file contents setup with a demo key and playback video. To use it, simply create a blank Android Kotlin app, and paste this into MainActivity.kt after following the first two setup steps for adding SourceSync to your app, and it should work just fine. **Remember you'll need to add Internet permissions at the very least to your mainifest file in order to load the video!**
+
+Internet permissions for your app will be required. Put this in your ```AndroidMinifest.xml``` file:
+```xml
+    <uses-permission android:name="android.permission.INTERNET" />
+```
+
+**MainActivitry.kt**
+```kotlin
+package com.sourcedigital.sourcesync.myapplication
+
+import android.net.Uri
+import android.os.Bundle
+import android.widget.MediaController
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Surface
+import com.sourcedigital.sourcesync.myapplication.ui.theme.MyApplicationTheme
+import android.widget.FrameLayout
+import android.widget.VideoView
+import io.sourcesync.android.SourceSync
+import io.sourcesync.android.Distribution
+
+class MainActivity : ComponentActivity() {
+  @OptIn(ExperimentalTvMaterial3Api::class)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      MyApplicationTheme {
+        Surface(
+          modifier = Modifier.fillMaxSize(),
+          shape = RectangleShape
+        ) {
+          Box(modifier = Modifier.fillMaxSize()) {
+            val context = LocalContext.current
+
+            // Remember SourceSync instance
+            val sourceSync = remember {
+              SourceSync.setup(context, "app.v1.demo")
+            }
+
+            // Create video view and overlay container
+            AndroidView(
+              factory = { context ->
+                FrameLayout(context).apply {
+                  // Add VideoView with media controls
+                  val videoView = VideoView(context)
+                  val mediaController = MediaController(context)
+                  mediaController.setAnchorView(videoView)
+                  videoView.setMediaController(mediaController)
+
+                  // Set video source - using a sample video URL
+                  val videoUri = Uri.parse("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
+                  videoView.setVideoURI(videoUri)
+
+                  addView(videoView, FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                  ))
+
+                  // Load distribution and create overlays
+                  try {
+                    // Using a demo distribution ID
+                    val distribution = sourceSync.getDistribution("41508")
+
+                    // Create overlays for all positions
+                    val overlays = sourceSync.createPositionedOverlays(
+                      distribution,
+                      videoView,
+                      "top", "bottom", "left", "right"
+                    )
+
+                    // Add overlays to the layout
+                    overlays.forEach { (position, view) ->
+                      addView(view)
+                    }
+
+                    // Start playing the video
+                    videoView.start()
+                  } catch (e: Exception) {
+                    e.printStackTrace()
+                  }
+                }
+              },
+              modifier = Modifier.fillMaxSize()
+            )
+
+            // Cleanup when the composable is disposed
+            DisposableEffect(Unit) {
+              onDispose {
+                // Add any cleanup code here if needed
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  override fun onBackPressed() {
+    // Handle back button for detail view
+    val sourceSync = SourceSync.setup(this, "app.v1.demo")
+    if (!sourceSync.handleBackButton()) {
+      super.onBackPressed()
+    }
+  }
+}
+```
+
 
 ## License
 
