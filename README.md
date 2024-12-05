@@ -151,7 +151,7 @@ That's it!
 You can also fully control ```activations```. Activations are what is put into your overlays. You can even create your own overlays with 
 
 ## Requirements
-- Minimum SDK: Android 24 (Android 7.0)
+- Minimum SDK: Android 16 (Android 4.1)
 - AndroidX
 - Java 11
 
