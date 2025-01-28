@@ -8,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 16
+        minSdk = 19
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -32,6 +32,10 @@ android {
             withSourcesJar()
             withJavadocJar()
         }
+    }
+    lint {
+        // Allow things like SourceSync.activation.detail instead of 23 char limit, i.e. cryptic "SS.activation.detail"
+        disable += setOf("LongLogTag")
     }
 }
 

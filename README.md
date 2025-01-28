@@ -14,7 +14,41 @@ The Android SDK is a native implementation that enables SourceSync within your a
 
 *The Android SDK has been tested to work for both Java and Kotlin.*
 
-## Installation
+# Building the SDK locally (SDK developer)
+
+```
+./gradlew clean build
+```
+
+This creates the `build` folder, specifically, the `build/outputs/aar/SourceSync Android-release.aar` file.
+
+## What is an aar file?
+
+It's an **Android Archive** file. It's how Android stores build artifacts that can't be contained in .jar files alone. It's just a zip file. In fact you can open it with any zip viewer. This will contain all assets used as well as .jar files (compiled code), android manifests, JNI libraries, R.txt with resource identifiers, etc.
+
+
+# Publishing
+
+Publishing currently happens with JitPack. This is a professional, enterprise-grade way to deploy artifacts. This is similar to jsdelivr instead of npm, and is much simpler. 
+
+Key differences...
+
+JitPack:
+
+* Much simpler setup - just push to GitHub and tag a release
+* No need to manually upload artifacts
+* Free and straightforward
+* Users add JitPack repository to their Gradle config
+
+Maven Central:
+
+* More "official" repository
+* More complex setup requiring Sonatype OSSRH account, GPG signing keys, Additional Gradle configurations, Manual release process
+* Stricter requirements for publishing
+* No need to publish a repo
+
+
+# Using the SDK in an application (app developer)
 
 ### Step 1: Add JitPack
 Add the JitPack repository to ```settings.gradle.kts```
@@ -40,7 +74,7 @@ dependencies {
 At minimum, you'll need io.sourcesync.android.SourceSync, and for most use cases, you'll probably want io.sourcesync.android.Distribution...
 
 ```java
-import io.sourcesync.android.SourceSYnc                           // The main SDK (required)
+import io.sourcesync.android.SourceSync                           // The main SDK (required)
 import io.sourcesync.android.Distribution                         // For loading and controlling distirbutions (optional)
 ```
 
