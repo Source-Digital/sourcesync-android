@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     id("maven-publish")
+    alias(libs.plugins.android.application) apply false
 }
 
 android {
-    namespace = "io.sourcesync.android"
+    namespace = "io.sourcesync.sdk.ui"
     compileSdk = 34
 
     defaultConfig {
@@ -37,8 +38,8 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            groupId = "com.github.Source-Digital.native-sdk"
-            artifactId = "sourcesync-android"
+            groupId = "com.github.Source-Digital"
+            artifactId = "sourcesync-sdk-ui-android"
             version = "1.0.0"
 
             afterEvaluate {
