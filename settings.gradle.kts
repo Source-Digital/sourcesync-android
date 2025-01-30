@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "sourcesync-sdk-ui-android"
 include(":sourcesync-sdk-ui")
+include(":demo-mobile")
