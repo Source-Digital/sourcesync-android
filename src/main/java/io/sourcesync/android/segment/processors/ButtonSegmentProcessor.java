@@ -16,9 +16,7 @@ public class ButtonSegmentProcessor implements SegmentProcessor {
     private static final String TAG = "ButtonSegmentProcessor";
     private final JSONObject settings;
 
-    public ButtonSegmentProcessor(JSONObject settings) {
-        this.settings = settings;
-    }
+    public ButtonSegmentProcessor() {}
 
     @Override
     public View processSegment(Context context, JSONObject segment) throws JSONException {

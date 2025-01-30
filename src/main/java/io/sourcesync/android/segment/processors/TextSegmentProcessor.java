@@ -22,9 +22,7 @@ public class TextSegmentProcessor implements SegmentProcessor {
     private static final String TAG = "TextSegmentProcessor";
     private final JSONObject settings;
 
-    public TextSegmentProcessor(JSONObject settings) {
-        this.settings = settings;
-    }
+    public TextSegmentProcessor() {}
 
     @Override
     public View processSegment(Context context, JSONObject segment) throws JSONException {

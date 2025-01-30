@@ -15,12 +15,10 @@ import android.util.Log;
 
 public class ColumnSegmentProcessor implements SegmentProcessor {
     private static final String TAG = "ColumnSegmentProcessor";
-    private final JSONObject settings;
     private final SegmentProcessorFactory processorFactory;
     private final ViewGroup parentContainer;
 
-    public ColumnSegmentProcessor(JSONObject settings, SegmentProcessorFactory processorFactory, ViewGroup parentContainer) {
-        this.settings = settings;
+    public ColumnSegmentProcessor(SegmentProcessorFactory processorFactory, ViewGroup parentContainer) {
         this.processorFactory = processorFactory;
         this.parentContainer = parentContainer;
     }
@@ -81,18 +79,11 @@ public class ColumnSegmentProcessor implements SegmentProcessor {
 
         columnLayout.setLayoutParams(columnParams);
 
-        // Apply spacing between children if specified
+        // Apply spacing between children
         if (attributes != null && attributes.spacing != null) {
-            try {
-                // Get spacing value from settings using the token
-                int spacingDp = settings.getJSONObject("sizeTokens")
-                    .getInt(attributes.spacing.toString().toLowerCase());
-                int spacingPx = LayoutUtils.dpToPx(context, spacingDp);
-                columnLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-                columnLayout.setDividerPadding(spacingPx);
-            } catch (JSONException e) {
-                Log.w(TAG, "Error getting spacing from settings", e);
-            }
+            int spacingPx = LayoutUtils.dpToPx(context, 8); // Default 8dp spacing
+            columnLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            columnLayout.setDividerPadding(spacingPx);
         }
 
         // Process children
