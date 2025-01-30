@@ -1,9 +1,8 @@
 package io.sourcesync.android.segment.processors;
 
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.view.View;
 import io.sourcesync.android.segment.SegmentProcessor;
 import io.sourcesync.android.segment.SegmentAttributes;
 import io.sourcesync.android.segment.LayoutUtils;
@@ -11,16 +10,15 @@ import io.sourcesync.android.segment.factory.SegmentProcessorFactory;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
+import android.view.ViewGroup;
 import android.util.Log;
 
 public class RowSegmentProcessor implements SegmentProcessor {
     private static final String TAG = "RowSegmentProcessor";
-    private final JSONObject settings;
     private final SegmentProcessorFactory processorFactory;
     private final ViewGroup parentContainer;
 
-    public RowSegmentProcessor(JSONObject settings, SegmentProcessorFactory processorFactory, ViewGroup parentContainer) {
-        this.settings = settings;
+    public RowSegmentProcessor(SegmentProcessorFactory processorFactory, ViewGroup parentContainer) {
         this.processorFactory = processorFactory;
         this.parentContainer = parentContainer;
     }
@@ -59,18 +57,11 @@ public class RowSegmentProcessor implements SegmentProcessor {
         }
         rowLayout.setLayoutParams(rowParams);
 
-        // Apply spacing between children if specified
+        // Apply spacing between children
         if (attributes != null && attributes.spacing != null) {
-            try {
-                // Get spacing value from settings using the token
-                int spacingDp = settings.getJSONObject("sizeTokens")
-                    .getInt(attributes.spacing.toString().toLowerCase());
-                int spacingPx = LayoutUtils.dpToPx(context, spacingDp);
-                rowLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-                rowLayout.setDividerPadding(spacingPx);
-            } catch (JSONException e) {
-                Log.w(TAG, "Error getting spacing from settings", e);
-            }
+            int spacingPx = LayoutUtils.dpToPx(context, 8); // Default 8dp spacing
+            rowLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            rowLayout.setDividerPadding(spacingPx);
         }
 
         // Process children
@@ -86,7 +77,7 @@ public class RowSegmentProcessor implements SegmentProcessor {
                     if (childView != null) {
                         rowLayout.addView(childView);
 
-                        // If child has percentage width, adjust its layout params
+                        // Handle child's percentage width if specified
                         JSONObject childAttributes = childSegment.optJSONObject("attributes");
                         if (childAttributes != null) {
                             SegmentAttributes childAttrs = SegmentAttributes.fromJson(childAttributes);

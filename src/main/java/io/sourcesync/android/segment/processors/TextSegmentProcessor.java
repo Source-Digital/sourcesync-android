@@ -20,11 +20,8 @@ import android.util.Log;
 
 public class TextSegmentProcessor implements SegmentProcessor {
     private static final String TAG = "TextSegmentProcessor";
-    private final JSONObject settings;
 
-    public TextSegmentProcessor(JSONObject settings) {
-        this.settings = settings;
-    }
+    public TextSegmentProcessor() {}
 
     @Override
     public View processSegment(Context context, JSONObject segment) throws JSONException {
@@ -76,18 +73,24 @@ public class TextSegmentProcessor implements SegmentProcessor {
                                    int end) {
         if (attributes == null) return;
 
-        // Apply font size using size token from settings
+        // Apply font size using hardcoded size tokens
         if (attributes.fontSize != null) {
-            try {
-                int dpSize = settings.getJSONObject("sizeTokens").getInt(attributes.fontSize.toLowerCase());
-                builder.setSpan(
-                    new AbsoluteSizeSpan(dpSize, true),
-                    start, end,
-                    SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
-            } catch (JSONException e) {
-                Log.e(TAG, "Error getting font size from settings", e);
+            int dpSize;
+            switch (attributes.fontSize.toLowerCase()) {
+                case "xxs": dpSize = 6; break;
+                case "xs": dpSize = 10; break;
+                case "sm": dpSize = 14; break;
+                case "md": dpSize = 16; break;
+                case "lg": dpSize = 20; break;
+                case "xl": dpSize = 24; break;
+                case "xxl": dpSize = 32; break;
+                default: dpSize = 16; break;
             }
+            builder.setSpan(
+                new AbsoluteSizeSpan(dpSize, true),
+                start, end,
+                SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
         }
 
         // Apply text color

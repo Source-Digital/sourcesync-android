@@ -14,11 +14,8 @@ import android.util.Log;
 
 public class ButtonSegmentProcessor implements SegmentProcessor {
     private static final String TAG = "ButtonSegmentProcessor";
-    private final JSONObject settings;
 
-    public ButtonSegmentProcessor(JSONObject settings) {
-        this.settings = settings;
-    }
+    public ButtonSegmentProcessor() {}
 
     @Override
     public View processSegment(Context context, JSONObject segment) throws JSONException {
@@ -49,17 +46,21 @@ public class ButtonSegmentProcessor implements SegmentProcessor {
                 }
             }
 
-            // Apply font size from settings using token
+            // Apply font size - using dp values directly
             if (attributes.fontSize != null) {
-                try {
-                    int dpSize = settings.getJSONObject("sizeTokens")
-                        .getInt(attributes.fontSize.toString().toLowerCase());
-                    button.setTextSize(dpSize);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error getting font size from settings", e);
-                    // Fallback to default size
-                    button.setTextSize(16);
+                // Map size tokens to dp values
+                int dpSize;
+                switch (attributes.fontSize.toLowerCase()) {
+                    case "xxs": dpSize = 6; break;
+                    case "xs": dpSize = 10; break;
+                    case "sm": dpSize = 14; break;
+                    case "md": dpSize = 16; break;
+                    case "lg": dpSize = 20; break;
+                    case "xl": dpSize = 24; break;
+                    case "xxl": dpSize = 32; break;
+                    default: dpSize = 16; break;
                 }
+                button.setTextSize(dpSize);
             }
 
             // Handle width if specified as percentage
