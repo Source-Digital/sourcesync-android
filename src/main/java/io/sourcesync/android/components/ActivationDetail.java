@@ -1,4 +1,4 @@
-package io.sourcesync.android.activation.components;
+package io.sourcesync.android.components;
 
 import android.content.Context;
 import android.widget.LinearLayout;
@@ -18,30 +18,16 @@ import io.sourcesync.android.segment.SegmentProcessor;
 import io.sourcesync.android.segment.LayoutUtils;
 
 public class ActivationDetail extends FrameLayout {
-    private static final String TAG = "SourceSync.activation.detail";
+    private static final String TAG = "ActivationDetail";
     private SegmentProcessorFactory processorFactory;
     private final LinearLayout contentContainer;
     private final ScrollView scrollView;
-    private final JSONObject settings;
 
-    public ActivationDetail(Context context, JSONArray template, Runnable onClose, JSONObject settings) {
+    public ActivationDetail(Context context, JSONArray template, Runnable onClose) {
         super(context);
-        this.settings = settings;
-
-        // Set layout parameters to match parent's full dimensions
-        setLayoutParams(new FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        ));
-
-        // Semi-transparent background with opacity from settings
-        try {
-            float opacity = (float) settings.getJSONObject("overlay").getDouble("defaultOpacity");
-            setBackgroundColor(Color.argb((int)(opacity * 255), 0, 0, 0));
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting opacity from settings", e);
-            setBackgroundColor(Color.argb(200, 0, 0, 0)); // Fallback opacity
-        }
+        
+        // Semi-transparent background
+        setBackgroundColor(Color.argb(200, 0, 0, 0));
 
         // Create header
         ActivationHeader header = new ActivationHeader(context, onClose);
@@ -52,7 +38,7 @@ public class ActivationDetail extends FrameLayout {
             LinearLayout.LayoutParams.MATCH_PARENT,
             0  // Use weight for height
         );
-        scrollParams.weight = 1;  // Take all remaining space
+        scrollParams.weight = 1;
         scrollView.setLayoutParams(scrollParams);
         scrollView.setFillViewport(true);
 
@@ -65,19 +51,12 @@ public class ActivationDetail extends FrameLayout {
         ));
         contentContainer.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        // Add padding from settings
-        try {
-            int paddingDp = settings.getJSONObject("overlay").getInt("defaultPadding");
-            int padding = LayoutUtils.dpToPx(getContext(), paddingDp);
-            contentContainer.setPadding(padding, padding, padding, padding);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error getting padding from settings", e);
-            int padding = LayoutUtils.dpToPx(getContext(), 16); // Fallback padding
-            contentContainer.setPadding(padding, padding, padding, padding);
-        }
+        // Add padding
+        int padding = LayoutUtils.dpToPx(getContext(), 16);
+        contentContainer.setPadding(padding, padding, padding, padding);
 
-        // Initialize processor factory with contentContainer
-        processorFactory = SegmentProcessorFactory.getInstance(settings, contentContainer);
+        // Initialize processor factory
+        processorFactory = new SegmentProcessorFactory(contentContainer);
 
         // Assemble the view hierarchy
         scrollView.addView(contentContainer);
@@ -116,31 +95,21 @@ public class ActivationDetail extends FrameLayout {
     private void processTemplate(JSONArray template) {
         try {
             for (int i = 0; i < template.length(); i++) {
-                JSONObject block = template.getJSONObject(i);
-                if ("NativeBlock".equals(block.getString("name"))) {
-                    JSONObject settings = block.getJSONObject("settings");
-                    processSegments(settings.getJSONArray("segments"));
+                JSONObject segment = template.getJSONObject(i);
+                String segmentType = segment.getString("type");
+                
+                SegmentProcessor processor = processorFactory.getProcessor(segmentType);
+                if (processor != null) {
+                    View segmentView = processor.processSegment(getContext(), segment);
+                    if (segmentView != null) {
+                        contentContainer.addView(segmentView);
+                    }
+                } else {
+                    Log.w(TAG, "No processor found for segment type: " + segmentType);
                 }
             }
         } catch (JSONException e) {
             Log.e(TAG, "Error processing detail template", e);
-        }
-    }
-
-    private void processSegments(JSONArray segments) throws JSONException {
-        for (int i = 0; i < segments.length(); i++) {
-            JSONObject segmentJson = segments.getJSONObject(i);
-            String segmentType = segmentJson.getString("type");
-
-            SegmentProcessor processor = processorFactory.getProcessor(segmentType);
-            if (processor != null) {
-                View segmentView = processor.processSegment(getContext(), segmentJson);
-                if (segmentView != null) {
-                    contentContainer.addView(segmentView);
-                }
-            } else {
-                Log.w(TAG, "No processor found for segment type: " + segmentType);
-            }
         }
     }
 }

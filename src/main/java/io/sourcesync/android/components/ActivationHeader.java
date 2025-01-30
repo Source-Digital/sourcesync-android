@@ -1,11 +1,11 @@
-package io.sourcesync.android.activation.components;
+package io.sourcesync.android.components;
 
 import android.content.Context;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.view.Gravity;
 import android.graphics.Color;
-import android.view.View;
+import io.sourcesync.android.segment.LayoutUtils;
 
 public class ActivationHeader extends FrameLayout {
 
@@ -26,12 +26,14 @@ public class ActivationHeader extends FrameLayout {
         closeButton.setBackgroundColor(Color.TRANSPARENT);
         closeButton.setOnClickListener(v -> onClose.run());
 
+        // Add padding to button
+        int padding = LayoutUtils.dpToPx(getContext(), 16);
         LayoutParams buttonParams = new LayoutParams(
             LayoutParams.WRAP_CONTENT,
             LayoutParams.WRAP_CONTENT,
             Gravity.END | Gravity.CENTER_VERTICAL
         );
-        buttonParams.setMargins(16, 16, 16, 16);
+        buttonParams.setMargins(padding, padding, padding, padding);
 
         addView(closeButton, buttonParams);
     }
