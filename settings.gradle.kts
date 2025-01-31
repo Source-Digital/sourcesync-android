@@ -19,6 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SourceSync Android"
-include(":app")
-include(":sourcesync-android")
+rootProject.name = "sourcesync-sdk-ui-android"
+include(":sourcesync-sdk-ui")
+include(":demo-mobile")
+include(":demo-tv")
