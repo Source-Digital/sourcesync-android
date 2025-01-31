@@ -3,17 +3,16 @@ plugins {
 }
 
 android {
-    namespace = "io.sourcesync.sdk.ui.demo_mobile"
+    namespace = "io.sourcesync.sdk.ui.demo_tv"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "io.sourcesync.sdk.ui.demo_mobile"
+        applicationId = "io.sourcesync.sdk.ui.demo_tv"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -32,12 +31,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":sourcesync-sdk-ui"))
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.androidx.leanback)
+    implementation(libs.glide)
 }

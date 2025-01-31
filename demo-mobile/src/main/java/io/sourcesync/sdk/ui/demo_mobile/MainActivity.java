@@ -1,24 +1,61 @@
 package io.sourcesync.sdk.ui.demo_mobile;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.FrameLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import io.sourcesync.android.Activation;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class MainActivity extends AppCompatActivity {
+    private Activation activation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        
+        // Create container for activation views
+        FrameLayout container = new FrameLayout(this);
+        setContentView(container);
+        
+        // Create activation
+        activation = new Activation(this);
+        container.addView(activation);
+
+        try {
+            // Show preview
+            JSONObject previewData = new JSONObject()
+                .put("title", "Demo Preview")
+                .put("subtitle", "Click to see details")
+                .put("backgroundColor", "#000000")
+                .put("backgroundOpacity", 0.66);
+                
+            activation.showPreview(previewData, v -> showDetail());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showDetail() {
+        try {
+            JSONObject detailData = new JSONObject()
+                .put("template", new JSONArray()
+                    .put(new JSONObject()
+                        .put("type", "text")
+                        .put("content", "Welcome to SourceSync!")
+                        .put("attributes", new JSONObject()
+                            .put("size", "lg")
+                            .put("color", "#FFFFFF")))
+                    .put(new JSONObject()
+                        .put("type", "button")
+                        .put("content", "Close")
+                        .put("attributes", new JSONObject()
+                            .put("backgroundColor", "#4CAF50")
+                            .put("textColor", "#FFFFFF"))));
+                        
+            activation.showDetail(detailData, () -> activation.hideDetail());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
